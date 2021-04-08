@@ -1,0 +1,10 @@
+#This yml to create user without pass , add it to wheel group , give access to sudo
+#change the user name below 
+#change pubkey to the public key of the new user
+- hosts: all
+  strategy: free
+  become: true
+  tasks:
+  - user: name=YourUser comment="PlaceYourName" 
+  - name: Placing key
+    authorized_key: user=YourUser key="{{ lookup('file', 'pubkey') }}"
