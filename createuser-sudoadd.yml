@@ -1,0 +1,22 @@
+#This yaml to create user without pass , add it to wheel group , give access to sudo.
+#change the user name below to any user you prefer.
+# make sure you add the new user pubkey in the same folder.
+- hosts: all
+  strategy: free
+  become: true
+  tasks:
+  - name: Allow wheel group to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%wheel'
+      line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+      validate: visudo -cf %s
+
+- hosts: all
+  strategy: free
+  become: true
+  tasks:
+  - user: name=yourUser comment="PlaceAname" group=wheel
+  - name: Placing key
+    authorized_key: user=yourUser key="{{ lookup('file', 'pubkey') }}"
